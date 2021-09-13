@@ -13,14 +13,14 @@
 DHT dht(SENSORDHT11, DHTTYPE);
 
 // Direccion del host servidor
-#define FIREBASE_HOST "dht11esp8266firebasekotlin.firebaseio.com"
+#define FIREBASE_HOST "https://aldebaran-a6ff8-default-rtdb.firebaseio.com/"
 
 // Secretos de la base de datos
-#define FIREBASE_AUTH "pPsdh0xQvWs8MxTNAQeHnuQ39hZNf6BPyCDHF9mZ"
+#define FIREBASE_AUTH "KMzKw1WnpafjxCTKsGLwIeBxtw94BaqiSrmg8pdm"
 
 
 // Configuración de la conexión Wifi
-#define WIFI_SSID "Developer"
+#define WIFI_SSID "FAMILIA_ROMERO"
 #define WIFI_PASSWORD "12345678"
 
 WiFiClient client; 
@@ -35,7 +35,7 @@ int valueHumidity;
 int percentageHumidity;
 
 
-// Sensor de Temperatura (DH - 11)
+// Termisistor NTC 10KOhm
 int Vo;
 float valueTemperature;
 float R1 = 300;              
@@ -86,17 +86,13 @@ void loop() {
   //
   float t = dht.readTemperature();
   int h = dht.readHumidity(); 
-  
-  //
-  Firebase.setString(firebaseData,"temperature", String(t));  
-  Firebase.setString(firebaseData,"humidity", String(h));
     
   
   // Fotorresistencia
   
-    //Se realiza la lectura analógica A5
+    // Se realiza la lectura analógica A5
   valueLight = analogRead(A5);
-    
+
     //Se realiza la impresión del valor obtenido de A5
   Serial.print("Luz: ");
   Serial.println(valueLight);
@@ -134,6 +130,12 @@ void loop() {
   Serial.print("Temperatura: ");
   Serial.print(valueTemperature);
   Serial.println(" C");
+
+    // Se envia los datos a Firebase
+  Firebase.setDouble(firebaseData,"temperature", Double(valueTemperature));  
+  Firebase.setDouble(firebaseData,"humidity", Double(percentageHumidity));
+  Firebase.setDouble(firebaseData,"sunlight", Double(valueLight));
+
     //Se realiza la toma de valores cada 0.5 segundos 
   delay(500);
 }
